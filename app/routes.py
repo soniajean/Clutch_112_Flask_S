@@ -1,21 +1,13 @@
 
 from app import app
 
+from flask import render_template
 
-@app.route('/home')
-def homePage():
-    return {
-        'Oh hello there': 'CLUTCH!'
-    }
 
 @app.route('/')
-def landingPage():
-    return {
-        'You\'ve landed!': 'I hope it was a good flight'
-    }
+def homePage():
+    return render_template('index.html')
 
-@app.route('/test')
-def testPage():
-    return {
-        'TESTINGTESTING': '123'
-    }
+@app.route('/login')
+def loginPage():
+    return render_template('login.html')
