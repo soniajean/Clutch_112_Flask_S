@@ -7,7 +7,8 @@
 
     {% for p in posts %}
         <div class="card" style="width: 18rem;">
-            <img src="{{ p.img_url }}" class="card-img-top" alt="{{ p.title }}">
+          <!-- href="/posts/{{p.id}} -->
+          <a href="{{ url_for('ig.indPost', post_id=p.id) }}" ><img src="{{ p.img_url }}" class="card-img-top" alt="{{ p.title }}"></a>
             <div class="card-body">
               <h5 class="card-title">{{ p.title }}</h5>
               <h6 class="card-subtitle mb-2 text-muted">{{ p.author.username }}</h6>

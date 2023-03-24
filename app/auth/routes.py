@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request
+from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import logout_user, login_user, current_user
 from werkzeug.security import check_password_hash
 
@@ -26,16 +26,15 @@ def loginPage():
             if user:
                 if check_password_hash(user.password, password):  # <--NEW
                 #user.password == password:  --OLD way
-                    print('YAY, you\'re logged in!')
+                    flash('YAY, you\'re logged in!', 'success')
                     login_user(user)
-                    print(current_user)
-                    print(current_user.username)
+                    
                     return redirect(url_for('homePage'))
                     
                 else:
-                    print('WRONG password. . .')
+                    flash('WRONG password. . .', 'warning')
             else:
-                print('This isn\'t a user!')
+                flash('This isn\'t a user!', 'danger')
             return redirect(url_for('auth.loginPage'))
     return render_template('login.html', form=form)
 
@@ -48,10 +47,17 @@ def registerPage():
             username = form.username.data
             email = form.email.data
             password = form.password.data
-            print(username, email, password)
+            if User.query.filter_by(username=username).first():
+                flash('That username already exists, please try another!', 'warning')
+                return redirect(url_for('auth.registerPage'))
+            if User.query.filter_by(email=email).first():
+                flash('that email has been used previously, try again', 'warning')
+                return redirect(url_for('auth.registerPage'))
 
             user = User(username, email, password)            
             user.saveUser()
+
+            flash(f'Welcome to INSTURBlog {user.username}', 'success')
             return redirect(url_for('auth.loginPage'))
     return render_template('register.html', form=form)
 
