@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import current_user, login_required
 
 from .forms import CreatePostForm, UpdatePostForm
-from ..models import Post
+from ..models import Post, User
 
 ig = Blueprint('ig', __name__, template_folder='ig_templates')
 
@@ -27,15 +27,17 @@ def createPost():
 @login_required
 def feed():
     posts = Post.query.order_by(Post.date_created).all()[::-1]
-    print(posts)
+    # print(posts)
     return render_template('feed.html', posts=posts)
 
 
 @ig.route('/posts/<int:post_id>')
 def indPost(post_id):
     post = Post.query.get(post_id)
+    p_likes = post.liked.count()
+    print(p_likes)
     if post:
-        return render_template('post.html', p=post)
+        return render_template('post.html', p=post, p_likes=p_likes)
     else:
         return redirect(url_for('ig.feed'))
     
@@ -70,4 +72,42 @@ def deletePost(post_id):
         post.deletePost()
     else:
         print("You cannot delete a post that isn't yours")
+    return redirect(url_for('ig.feed'))
+
+
+@ig.route('/follow/<int:user_id>')
+@login_required
+def follow(user_id):
+    u = User.query.get(user_id)
+    if u:
+        current_user.follow(u)
+        flash(f"Now following {u.username}", category='success')
+    else:
+        flash(f"User doesn't exist!", category='danger')
+
+    return redirect(url_for('homePage'))
+
+@ig.route('/unfollow/<int:user_id>')
+@login_required
+def unfollow(user_id):
+    u = User.query.get(user_id)
+    if u:
+        current_user.unfollow(u)
+        flash(f"No longer following {u.username}", category='warning')
+    else:
+        flash(f"User doesn't exist!", category='danger')
+    return redirect(url_for('homePage'))
+
+
+@ig.route('/posts/like/<int:post_id>')
+@login_required
+def likePost(post_id):
+    post = Post.query.get(post_id)
+    my_likes = current_user.liked
+    print(my_likes)
+    if post in my_likes:
+        flash(f"You've already like that one silly!", category='warning')
+    else:
+        post.likePost(current_user)
+        flash(f"Big thumgs up for that one!", category='success')
     return redirect(url_for('ig.feed'))

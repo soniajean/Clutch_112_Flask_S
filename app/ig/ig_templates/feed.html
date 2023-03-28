@@ -13,8 +13,9 @@
               <h5 class="card-title">{{ p.title }}</h5>
               <h6 class="card-subtitle mb-2 text-muted">{{ p.author.username }}</h6>
               <p class="card-text">{{ p.body }}</p>
+              <p>{{ moment(p.date_created).fromNow() }}</p>
               
-              <a href="#" class="btn btn-primary">Go somewhere</a>
+              <a href="{{ url_for('ig.likePost', post_id=p.id) }}" class="btn btn-primary">Like</a>
             </div>
           </div>
     {% endfor %}

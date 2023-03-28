@@ -8,11 +8,14 @@ from .ig.routes import ig
 from .models import db, User
 from flask_migrate import Migrate
 from flask_login import LoginManager
+from flask_moment import Moment
 
 
 app = Flask(__name__)
 
 login = LoginManager()
+moment = Moment(app)
+
 
 @login.user_loader
 def load_user(user_id):
