@@ -105,5 +105,34 @@ class Post(db.Model):
     def likePost(self, user):
         self.liked.append(user)
         db.session.commit()
+
+    def to_dict(self):
+        return {
+            'title' : self.title,
+            'id' : self.id,
+            'img_url' : self.img_url,
+            'body' : self.body,
+            'date_created' : self.date_created,
+            'user_id' : self.user_id,
+            'author' : self.author.username
+
+        }
     
 
+
+class Driver(db.Model):
+    d_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(50), nullable=False)
+    first_name = db.Column(db.String)
+    last_name = db.Column(db.String)
+    nation = db.Column(db.String)
+
+    def __init__(self, id, first_name, last_name, nation):
+        self.id = id
+        self.first_name = first_name
+        self.last_name = last_name
+        self.nation = nation
+
+    def saveDriver(self):
+        db.session.add(self)
+        db.session.commit()
