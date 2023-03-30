@@ -34,8 +34,9 @@ def feed():
 @ig.route('/posts/<int:post_id>')
 def indPost(post_id):
     post = Post.query.get(post_id)
+    p_what = post.liked
     p_likes = post.liked.count()
-    print(p_likes)
+    print(f"p_WHAT????----{p_what}")
     if post:
         return render_template('post.html', p=post, p_likes=p_likes)
     else:
