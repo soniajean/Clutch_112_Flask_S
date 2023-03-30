@@ -3,7 +3,6 @@ from datetime import datetime
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash
 
-
 db = SQLAlchemy()
 
 #  Example on creating a join-table as it's own class
