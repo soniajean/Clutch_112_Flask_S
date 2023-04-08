@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from ..models import Post
+from ..models import Post, Product
 
 api = Blueprint('api', __name__, url_prefix='/api')
 
@@ -10,6 +10,15 @@ def getPosts():
     return {
         'status': 'ok',
         'data': postlist
+    }
+@api.route('/products')
+def getProds():
+    prods = Product.query.all()
+    prodlist = [p.to_dict() for p in prods]
+    return {
+        'status': 'ok',
+        'data' : prodlist,
+        'item_count' : len(prodlist)
     }
 
 @api.get('/post/<int:post_id>')
@@ -24,6 +33,19 @@ def getSinglePost(post_id):
     return {
         'status' : 'NOT ok',
         'message' : 'There is no post for the id you have submitted!'
+    }
+@api.route('/product/<int:prod_id>')
+def getIndProd(prod_id):
+    p = Product.query.get(prod_id)
+    if p:
+        prod = p.to_dict()
+        return {
+            'status': 'ok',
+            'data': prod,
+        }
+    return {
+        'status': 'Error',
+        'message': 'No product with that ID exists',
     }
 
 @api.post('/createpost')

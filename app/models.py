@@ -135,3 +135,50 @@ class Driver(db.Model):
     def saveDriver(self):
         db.session.add(self)
         db.session.commit()
+
+class Product(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    make = db.Column(db.String(50), nullable=False)
+    model = db.Column(db.String(50))
+    year = db.Column(db.Integer)
+    miles = db.Column(db.Integer)
+    desc = db.Column(db.String)
+    name = db.Column(db.String)
+    img_url = db.Column(db.String)
+    price = db.Column(db.Integer)
+    date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
+
+    def __init__(self, make, model, year, miles, desc, name, img_url, price=0):
+        self.make = make
+        self.model = model
+        self.year = year
+        self.miles = miles
+        self.desc = desc
+        self.name = name
+        self.img_url = img_url
+        self.price = price
+
+    def to_dict(self):
+        return {
+            'id' : self.id,
+            'make' : self.make,
+            'model' : self.model,
+            'year' : self.year,
+            'miles' : self.miles,
+            'desc' : self.desc,
+            'name' : self.name,
+            'img_url' : self.img_url,
+            'price' : self.price,
+            'date_created' : self.date_created,
+        }
+    
+    def saveProduct(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def saveChanges(self):
+        db.session.commit()
+
+    def deleteProduct(self):
+        db.session.delete(self)
+        db.session.commit()

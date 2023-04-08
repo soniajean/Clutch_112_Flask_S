@@ -6,6 +6,7 @@ from .auth.routes import auth
 from .ig.routes import ig
 from .api.routes import api
 from .driver.routes import driver
+from .shop.routes import shop
 
 from .models import db, User
 from flask_migrate import Migrate
@@ -38,5 +39,6 @@ app.register_blueprint(auth)
 app.register_blueprint(ig)
 app.register_blueprint(api)
 app.register_blueprint(driver)
+app.register_blueprint(shop)
 
 from . import routes
