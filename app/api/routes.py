@@ -1,5 +1,6 @@
 from flask import Blueprint, request
-from ..models import Post, Product
+from ..models import Post, Product, User
+from werkzeug.security import check_password_hash
 
 api = Blueprint('api', __name__, url_prefix='/api')
 
@@ -78,4 +79,32 @@ def getPostsByUser(user_id):
     return {
         'status' : ' NOT ok',
         'message' : 'No posts available to return from that ID'
+    }
+
+@api.post('/signin')
+def signin():
+    data = request.json
+
+    un = data['username']
+    pw = data['password']
+
+    user = User.query.filter_by(username=un).first()
+    if user:
+        if check_password_hash(user.password, pw):
+            return {
+                'status': 'ok',
+                'message' : 'Successfully logged in!',
+                'data' : {
+                    'user' : user.to_dict(),
+                    'token' : ''
+                }
+            }
+            
+        return {
+            'status' : 'NOT ok',
+            'message' : 'You used the worng Password buddy!'
+        }
+    return {
+        'status' : 'NOT ok',
+        'message' : 'That user does not exist!'
     }

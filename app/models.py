@@ -69,6 +69,13 @@ class User(db.Model, UserMixin):
         db.session.add(self)
         db.session.commit()
 
+    def to_dict(self):
+        return {
+            'id' : self.id,
+            'username' : self.username,
+            'email' : self.email,
+        }
+
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -114,7 +121,6 @@ class Post(db.Model):
             'date_created' : self.date_created,
             'user_id' : self.user_id,
             'author' : self.author.username
-
         }
     
 
