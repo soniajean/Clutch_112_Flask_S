@@ -1,6 +1,7 @@
 from flask import Blueprint, request
 from ..models import Post, Product, User
 from werkzeug.security import check_password_hash
+from ..apiauth import token_required, basic_auth, token_auth
 
 api = Blueprint('api', __name__, url_prefix='/api')
 
@@ -94,10 +95,7 @@ def signin():
             return {
                 'status': 'ok',
                 'message' : 'Successfully logged in!',
-                'data' : {
-                    'user' : user.to_dict(),
-                    'token' : ''
-                }
+                'data' : user.to_dict(),
             }
             
         return {
@@ -107,4 +105,31 @@ def signin():
     return {
         'status' : 'NOT ok',
         'message' : 'That user does not exist!'
+    }
+
+@api.post('/admincreatepost')
+@token_required
+def adminCreatePostAPI(user):
+    data = request.json
+    print(data)
+
+    title = data['title']
+    img_url = data['img_url']
+    body = data['body']
+
+    new = Post(title, img_url, body, user.id)
+    new.savePost()
+    return {
+        'status': 'ok',
+        'message' : 'New Post successfully created!'
+    }
+
+@api.post('/token')
+@basic_auth.login_required
+def getToken():
+    user = basic_auth.current_user()
+    return {
+        'status': 'ok',
+        'message' : 'Successful login',
+        'data' : user.to_dict()
     }

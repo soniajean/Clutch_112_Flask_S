@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash
+from secrets import token_hex
 
 db = SQLAlchemy()
 
@@ -34,6 +35,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(50), nullable=False, unique=True)
     email = db.Column(db.String, nullable=False, unique=True)
     password = db.Column(db.String, nullable=False)
+    token = db.Column(db.String, default=None)
     post = db.relationship('Post', backref='author', lazy=True)
     following = db.relationship('User',
         #this is multi-join!
@@ -63,7 +65,7 @@ class User(db.Model, UserMixin):
         self.username = username
         self.email = email
         self.password = generate_password_hash(password) 
-        #self.password = password   ---OLD  not hashed
+        self.token = token_hex(16)
 
     def saveUser(self):
         db.session.add(self)
@@ -74,6 +76,7 @@ class User(db.Model, UserMixin):
             'id' : self.id,
             'username' : self.username,
             'email' : self.email,
+            'token' : self.token
         }
 
 
